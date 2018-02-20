@@ -28,7 +28,6 @@ seq:
   - id: file_data
     type: file_data_type
     repeat: eos
-    #eos-error: false
 types:
   backup_disk_header_type:
     seq:
@@ -74,7 +73,7 @@ types:
     doc: |
       Standard SCSI boot blocks, begins with LK, shortly followed by
       System, Finder, MacsBug, Dissasembler, StartUpScreen, Finder and Clipboard.
-      Theyare written to the hard drive by the restore program when the 
+      They are written to the hard drive by the restore program when the 
       System Folder is blessed as it's restored.
     doc-ref: http://mcosre.sourceforge.net/docs/boot_blocks.html
     seq:
@@ -159,7 +158,7 @@ types:
   file_data_type:
     seq:
       - id: file_version_a
-        #contents: [0x01, 0x00] or [0x01, 0x03]
+        # eating null bytes from the previous file here as a hack
         type: u1
         repeat: until
         repeat-until: _ != 0
@@ -167,7 +166,6 @@ types:
         type: u1
       - id: file_magic
         contents: 'RLDW'
-        #type: u4
       - id: file_starts_on_disk
         type: u2
       - id: backup_start_time
@@ -234,12 +232,6 @@ types:
         size: data_fork_in_file_length
       - id: resource_fork
         size: resource_fork_in_file_length
-      #- id: file_padding
-      #  type: u1
-        #size-eos: true
-      #  repeat: until
-      #  repeat-until: _ != 0
-      #  include: false
   finfo_data_struct:
     seq:
       - id: fd_type
