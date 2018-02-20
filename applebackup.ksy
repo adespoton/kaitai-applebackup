@@ -15,7 +15,7 @@ doc: |
   Later versions of the Performa line came with Restore CDs that contained "Restore All Software"
   and "Restore System Software" folders containing 1414KB files named "Data File #" -- where all
   the required files resided in the same folder on the CD.
-  These files had the Type/Creatorcodes of OBDc and OBBa.
+  These files had the Type/Creator codes of OBDc and OBBa.
   Both file types are flat data files as indicated in the struct below.
 doc-ref: https://www.downtowndougbrown.com/2013/06/legacy-apple-backup-file-format-on-floppy-disks/
 seq:
