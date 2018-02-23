@@ -15,7 +15,7 @@ doc: |
   Later versions of the Performa line came with Restore CDs that contained "Restore All Software"
   and "Restore System Software" folders containing 1414KB files named "Data File #" -- where all
   the required files resided in the same folder on the CD.
-  These files had the Type/Creator codes of OBDc and OBBa.
+  These files had the Type/Creatorcodes of OBDc and OBBa.
   Both file types are flat data files as indicated in the struct below.
 doc-ref: https://www.downtowndougbrown.com/2013/06/legacy-apple-backup-file-format-on-floppy-disks/
 seq:
@@ -26,9 +26,15 @@ seq:
     type: boot_blocks_type
     size: 0x400
   - id: file_data
-    type: file_data_type
-    repeat: eos
+    type: file_data_seq
+    size: (backup_disk_header.total_size_used - 0x600)
 types:
+  file_data_seq:
+    seq:
+      - id: file_data_contents
+        type: file_data_type
+        repeat: expr
+        repeat-expr: 37
   backup_disk_header_type:
     seq:
       - id: version
@@ -73,7 +79,7 @@ types:
     doc: |
       Standard SCSI boot blocks, begins with LK, shortly followed by
       System, Finder, MacsBug, Dissasembler, StartUpScreen, Finder and Clipboard.
-      They are written to the hard drive by the restore program when the 
+      Theyare written to the hard drive by the restore program when the 
       System Folder is blessed as it's restored.
     doc-ref: http://mcosre.sourceforge.net/docs/boot_blocks.html
     seq:
@@ -157,15 +163,12 @@ types:
         size: 0x376
   file_data_type:
     seq:
-      - id: file_version_a
-        # eating null bytes from the previous file here as a hack
-        type: u1
-        repeat: until
-        repeat-until: _ != 0
-      - id: file_version_b
-        type: u1
+      - id: file_version
+        #contents: [0x01, 0x00] or [0x01, 0x03]
+        type: u2
       - id: file_magic
         contents: 'RLDW'
+        #type: u4
       - id: file_starts_on_disk
         type: u2
       - id: backup_start_time
@@ -232,6 +235,10 @@ types:
         size: data_fork_in_file_length
       - id: resource_fork
         size: resource_fork_in_file_length
+      - id: file_padding
+        # still a bug here; doesn't work on last disk
+        size: (0x200 - ((0x70 + data_fork_in_file_length + resource_fork_in_file_length + full_file_path_length) % 0x200))
+        if: ((0x200 - ((0x70 + data_fork_in_file_length + resource_fork_in_file_length + full_file_path_length) % 0x200)) != 0x200) or (_parent._parent.backup_disk_header.disk_number - _parent._parent.backup_disk_header.total_disks == 0) 
   finfo_data_struct:
     seq:
       - id: fd_type
