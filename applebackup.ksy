@@ -33,8 +33,7 @@ types:
     seq:
       - id: file_data_contents
         type: file_data_type
-        repeat: expr
-        repeat-expr: 37
+        repeat: eos
   backup_disk_header_type:
     seq:
       - id: version
@@ -236,7 +235,6 @@ types:
       - id: resource_fork
         size: resource_fork_in_file_length
       - id: file_padding
-        # still a bug here; doesn't work on last disk
         size: (0x200 - ((0x70 + data_fork_in_file_length + resource_fork_in_file_length + full_file_path_length) % 0x200))
         if: ((0x200 - ((0x70 + data_fork_in_file_length + resource_fork_in_file_length + full_file_path_length) % 0x200)) != 0x200) or (_parent._parent.backup_disk_header.disk_number - _parent._parent.backup_disk_header.total_disks == 0) 
   finfo_data_struct:
