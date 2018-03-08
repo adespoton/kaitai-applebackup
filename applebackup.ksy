@@ -4,6 +4,7 @@ meta:
   application: Apple Backup 1.00 - 1.04
   license: MIT
   endian: be
+  ks-debug: true
 doc: |
   In the early- to mid- 1990s, Apple produced their Macintosh Performa line of computers.
   These computers did not come with install disks, but instead with software pre-installed
@@ -231,13 +232,11 @@ types:
         size: full_file_path_length
       - id: data_fork
         size: data_fork_in_file_length
-        if: data_fork_in_file_length != 0
       - id: resource_fork
         size: resource_fork_in_file_length
-        if: resource_fork_in_file_length != 0
       - id: file_padding
         size: (0x200 - ((0x70 + data_fork_in_file_length + resource_fork_in_file_length + full_file_path_length) % 0x200))
-        if: ((0x70 + data_fork_in_file_length + resource_fork_in_file_length + full_file_path_length) % 0x200) != 0) or (_parent._parent.backup_disk_header.disk_number - _parent._parent.backup_disk_header.total_disks == 0) 
+        if: ((0x200 - ((0x70 + data_fork_in_file_length + resource_fork_in_file_length + full_file_path_length) % 0x200)) != 0x200) or (_parent._parent.backup_disk_header.disk_number - _parent._parent.backup_disk_header.total_disks == 0) 
   finfo_data_struct:
     seq:
       - id: fd_type
@@ -248,8 +247,10 @@ types:
         type: str
         encoding: ascii
         size: 4
-      - id: fd_flags
-        type: u2
+      - id: fd_flags_0_7
+        type: u1
+      - id: fd_flags_8_f
+        type: u1
       - id: fd_location
         type: u4
       - id: fd_fldr
