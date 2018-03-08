@@ -31,7 +31,7 @@ seq:
     type: str
     encoding: ascii
     size: 4
-  - id: finder_flags_8_15
+  - id: finder_flags_8_e
     doc: |
       Bit 7 - isAlias. 
       Bit 6 - isInvisible. 
