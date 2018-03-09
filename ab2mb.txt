@@ -7,6 +7,7 @@ import system.magicFixDelimiters
 # and stored on disks named Hard disk copy X.  If someone has made disk images of the disks,
 # these can have the first 0x6054 of the disk image cut off/skipped and we should have the data file.
 # We can expand this logic in the future to auto-rip backup files from disk images
+# When converting this to real code, use the macbinary.ksy to validate the generated files.
 
 inDir = <inputDirectory>
 if fileIO.findDir(inDir) is true then continue
