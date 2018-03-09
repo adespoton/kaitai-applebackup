@@ -25,8 +25,8 @@ if not fileIO.findDir(outDir):
   fileIO.createDir(outDir)
 
 # Needed to load the first archive to get the number of segments
-for n = 1 to f.totalDisks do:
-  for i = 0 to f.fileData.fileDataContents.fileDataType.size do:
+for n = 1 to f.backupDiskHeader.totalDisks do:
+  for i = 0 to f.fileData.fileDataContents.fileDataType.size do: # not sure about .size -- must be some way to get the total number
     currArchiveFile = f.fileData.fileDataContents.fileDataType[i]
     
     # To do: fullFilePath actually stores the entire path to file with : as delimiter.  
@@ -38,7 +38,7 @@ for n = 1 to f.totalDisks do:
         # we've got a folder, so let's just create it.
         fileIO.createDir(outDir+realFilePath)
       else:
-      # If the file doesn't exist, we can just dump data in macBinary format
+        # If the file doesn't exist, we can just dump data in macBinary format
         currFile = fileIO.createFile(outDir+realFilePath)
         fileIO.append(currFile,0x0) # unused
         fileIO.append(currFile,currArchiveFile.fileNameLen)
@@ -68,15 +68,39 @@ for n = 1 to f.totalDisks do:
         fileIO.append(currFile,0x3) # MacBinary Version - we're following 3.  Maybe we should use 2, but we haven't.
         fileIO.append(currFile,0x2) # minMacBinaryVersionNeeded - we're not adding extended data, so this should be v2 compatible
         fileIO.append(currFile,0x0000) # <-- CRC check.  This will fail, but eventually I can overwrite this I guess.
+        # Next part duplicated in the else -- I could probably optimize this in the future.
         fileIO.append(currFile,curArchiveFile.dataFork) # if it's empty, we'll just write nothing :)
-        dfPaddingLength = (128 - (curArchiveFile.dataForkLength % 128))
-        for i = 1 to dfPaddingLength do:
-          fileIO.append(currFile,0x0)
+        # if file padding exists, we've got to EOF. There are edge cases where the file record is exactly 0x200 long
+        # or we've written the entire data fork and padded and written none of the resource fork; those should
+        # be added to the logic later.  Apple Backup shouldn't do the second by default and the first is unlikely.
+        if curArchiveFile.filePadding: 
+          dfPaddingLength = (128 - (curArchiveFile.dataForkLength % 128))
+          if dfPaddingLength != 128:
+            for i = 1 to dfPaddingLength do:
+              fileIO.append(currFile,0x0)
         fileIO.append(currFile,curArchiveFile.resourceFork) # if it's empty, we'll just write nothing :)
-        rfPaddingLength = (128 - (curArchiveFile.resourceForkLength % 128))
-        for i = 1 to rfPaddingLength do:
-          fileIO.append(currFile,0x0)
+        if curArchiveFile.filePadding: 
+          rfPaddingLength = (128 - (curArchiveFile.resourceForkLength % 128))
+          if rfPaddingLength != 128:
+            for i = 1 to rfPaddingLength do:
+              fileIO.append(currFile,0x0)
     else:
       <find data that needs to be appended to the existing file and append it IF this file spans archive segments>
-      currFile = fileIO.openForAppend(currArchiveFile.fileName)
+      if (f.backupDiskHeader.diskNumber > currArchiveFile.fileStartsOnDisk):
+        currFile = fileIO.openForAppend(outDir+realFilePath)
+        fileIO.append(currFile,curArchiveFile.dataFork) # if it's empty, we'll just write nothing :)
+        # if file padding exists, we've got to EOF. There are edge cases where the file record is exactly 0x200 long
+        # or we've written the entire data fork and padded and written none of the resource fork; those should
+        # be added to the logic later.  Apple Backup shouldn't do the second by default and the first is unlikely.
+        if curArchiveFile.filePadding: 
+          dfPaddingLength = (128 - (curArchiveFile.dataForkLength % 128))
+          if dfPaddingLength != 128:
+            for i = 1 to dfPaddingLength do:
+              fileIO.append(currFile,0x0)
+        fileIO.append(currFile,curArchiveFile.resourceFork) # if it's empty, we'll just write nothing :)
+        if curArchiveFile.filePadding: 
+          rfPaddingLength = (128 - (curArchiveFile.resourceForkLength % 128))
+          if rfPaddingLength != 128:
+            for i = 1 to rfPaddingLength do:
+              fileIO.append(currFile,0x0)
     fileIO.close(currFile)
