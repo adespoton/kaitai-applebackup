@@ -1,0 +1,54 @@
+digraph {
+	rankdir=LR;
+	node [shape=plaintext];
+	subgraph cluster__macbinary {
+		label="Macbinary";
+		graph[style=dotted];
+
+		macbinary__seq [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+			<TR><TD BGCOLOR="#E0FFE0">pos</TD><TD BGCOLOR="#E0FFE0">size</TD><TD BGCOLOR="#E0FFE0">type</TD><TD BGCOLOR="#E0FFE0">id</TD></TR>
+			<TR><TD PORT="old_section_header_pos">0</TD><TD PORT="old_section_header_size">1</TD><TD>00</TD><TD PORT="old_section_header_type">old_section_header</TD></TR>
+			<TR><TD PORT="filename_length_pos">1</TD><TD PORT="filename_length_size">1</TD><TD>u1</TD><TD PORT="filename_length_type">filename_length</TD></TR>
+			<TR><TD PORT="filename_pos">2</TD><TD PORT="filename_size">filename_length</TD><TD>str(ascii)</TD><TD PORT="filename_type">filename</TD></TR>
+			<TR><TD PORT="filename_padding_pos">...</TD><TD PORT="filename_padding_size">(63 - filename_length)</TD><TD></TD><TD PORT="filename_padding_type">filename_padding</TD></TR>
+			<TR><TD PORT="file_type_pos">...</TD><TD PORT="file_type_size">4</TD><TD>str(ascii)</TD><TD PORT="file_type_type">file_type</TD></TR>
+			<TR><TD PORT="file_creator_pos">...</TD><TD PORT="file_creator_size">4</TD><TD>str(ascii)</TD><TD PORT="file_creator_type">file_creator</TD></TR>
+			<TR><TD PORT="finder_flags_8_f_pos">...</TD><TD PORT="finder_flags_8_f_size">1</TD><TD></TD><TD PORT="finder_flags_8_f_type">finder_flags_8_f</TD></TR>
+			<TR><TD PORT="zero_fill_pos">...</TD><TD PORT="zero_fill_size">1</TD><TD>00</TD><TD PORT="zero_fill_type">zero_fill</TD></TR>
+			<TR><TD PORT="win_y_pos_pos">...</TD><TD PORT="win_y_pos_size">2</TD><TD>u2be</TD><TD PORT="win_y_pos_type">win_y_pos</TD></TR>
+			<TR><TD PORT="win_x_pos_pos">...</TD><TD PORT="win_x_pos_size">2</TD><TD>u2be</TD><TD PORT="win_x_pos_type">win_x_pos</TD></TR>
+			<TR><TD PORT="win_id_pos">...</TD><TD PORT="win_id_size">2</TD><TD>u2be</TD><TD PORT="win_id_type">win_id</TD></TR>
+			<TR><TD PORT="protected_flag_pos">...</TD><TD PORT="protected_flag_size">1</TD><TD>u1</TD><TD PORT="protected_flag_type">protected_flag</TD></TR>
+			<TR><TD PORT="zero_fill_2_pos">...</TD><TD PORT="zero_fill_2_size">1</TD><TD>00</TD><TD PORT="zero_fill_2_type">zero_fill_2</TD></TR>
+			<TR><TD PORT="data_fork_length_pos">...</TD><TD PORT="data_fork_length_size">4</TD><TD>u4be</TD><TD PORT="data_fork_length_type">data_fork_length</TD></TR>
+			<TR><TD PORT="resource_fork_length_pos">...</TD><TD PORT="resource_fork_length_size">4</TD><TD>u4be</TD><TD PORT="resource_fork_length_type">resource_fork_length</TD></TR>
+			<TR><TD PORT="creation_date_pos">...</TD><TD PORT="creation_date_size">4</TD><TD>u4be</TD><TD PORT="creation_date_type">creation_date</TD></TR>
+			<TR><TD PORT="modification_date_pos">...</TD><TD PORT="modification_date_size">4</TD><TD>u4be</TD><TD PORT="modification_date_type">modification_date</TD></TR>
+			<TR><TD PORT="get_info_length_pos">...</TD><TD PORT="get_info_length_size">2</TD><TD>u2be</TD><TD PORT="get_info_length_type">get_info_length</TD></TR>
+			<TR><TD PORT="finder_flags_0_7_pos">...</TD><TD PORT="finder_flags_0_7_size">1</TD><TD>u1</TD><TD PORT="finder_flags_0_7_type">finder_flags_0_7</TD></TR>
+			<TR><TD PORT="signature_pos">...</TD><TD PORT="signature_size">4</TD><TD>u4be</TD><TD PORT="signature_type">signature</TD></TR>
+			<TR><TD PORT="fd_script_pos">...</TD><TD PORT="fd_script_size">1</TD><TD>u1</TD><TD PORT="fd_script_type">fd_script</TD></TR>
+			<TR><TD PORT="fd_x_flags_pos">...</TD><TD PORT="fd_x_flags_size">1</TD><TD>u1</TD><TD PORT="fd_x_flags_type">fd_x_flags</TD></TR>
+			<TR><TD PORT="padding_pos">...</TD><TD PORT="padding_size">8</TD><TD></TD><TD PORT="padding_type">padding</TD></TR>
+			<TR><TD PORT="total_unpacked_files_length_pos">...</TD><TD PORT="total_unpacked_files_length_size">4</TD><TD>u4be</TD><TD PORT="total_unpacked_files_length_type">total_unpacked_files_length</TD></TR>
+			<TR><TD PORT="second_header_length_pos">...</TD><TD PORT="second_header_length_size">2</TD><TD>u2be</TD><TD PORT="second_header_length_type">second_header_length</TD></TR>
+			<TR><TD PORT="second_header_pos">...</TD><TD PORT="second_header_size">second_header_length</TD><TD></TD><TD PORT="second_header_type">second_header</TD></TR>
+			<TR><TD PORT="second_header_padding_pos">...</TD><TD PORT="second_header_padding_size">(128 - (second_header_length % 128))</TD><TD></TD><TD PORT="second_header_padding_type">second_header_padding</TD></TR>
+			<TR><TD PORT="macbinary_version_pos">...</TD><TD PORT="macbinary_version_size">1</TD><TD>u1</TD><TD PORT="macbinary_version_type">macbinary_version</TD></TR>
+			<TR><TD PORT="min_macbinary_version_needed_pos">...</TD><TD PORT="min_macbinary_version_needed_size">1</TD><TD>u1</TD><TD PORT="min_macbinary_version_needed_type">min_macbinary_version_needed</TD></TR>
+			<TR><TD PORT="crc_check_pos">...</TD><TD PORT="crc_check_size">4</TD><TD>u4be</TD><TD PORT="crc_check_type">crc_check</TD></TR>
+			<TR><TD PORT="data_fork_pos">...</TD><TD PORT="data_fork_size">data_fork_length</TD><TD></TD><TD PORT="data_fork_type">data_fork</TD></TR>
+			<TR><TD PORT="data_fork_padding_pos">...</TD><TD PORT="data_fork_padding_size">(128 - (data_fork_length % 128))</TD><TD></TD><TD PORT="data_fork_padding_type">data_fork_padding</TD></TR>
+			<TR><TD PORT="resource_fork_pos">...</TD><TD PORT="resource_fork_size">resource_fork_length</TD><TD></TD><TD PORT="resource_fork_type">resource_fork</TD></TR>
+			<TR><TD PORT="resource_fork_padding_pos">...</TD><TD PORT="resource_fork_padding_size">(128 - (resource_fork_length % 128))</TD><TD></TD><TD PORT="resource_fork_padding_type">resource_fork_padding</TD></TR>
+		</TABLE>>];
+	}
+	macbinary__seq:filename_length_type -> macbinary__seq:filename_size [color="#404040"];
+	macbinary__seq:filename_length_type -> macbinary__seq:filename_padding_size [color="#404040"];
+	macbinary__seq:second_header_length_type -> macbinary__seq:second_header_size [color="#404040"];
+	macbinary__seq:second_header_length_type -> macbinary__seq:second_header_padding_size [color="#404040"];
+	macbinary__seq:data_fork_length_type -> macbinary__seq:data_fork_size [color="#404040"];
+	macbinary__seq:data_fork_length_type -> macbinary__seq:data_fork_padding_size [color="#404040"];
+	macbinary__seq:resource_fork_length_type -> macbinary__seq:resource_fork_size [color="#404040"];
+	macbinary__seq:resource_fork_length_type -> macbinary__seq:resource_fork_padding_size [color="#404040"];
+}

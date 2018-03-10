@@ -1,0 +1,205 @@
+digraph {
+	rankdir=LR;
+	node [shape=plaintext];
+	subgraph cluster__apple_backup {
+		label="AppleBackup";
+		graph[style=dotted];
+
+		apple_backup__seq [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+			<TR><TD BGCOLOR="#E0FFE0">pos</TD><TD BGCOLOR="#E0FFE0">size</TD><TD BGCOLOR="#E0FFE0">type</TD><TD BGCOLOR="#E0FFE0">id</TD></TR>
+			<TR><TD PORT="backup_disk_header_pos">0</TD><TD PORT="backup_disk_header_size">512</TD><TD>BackupDiskHeaderType</TD><TD PORT="backup_disk_header_type">backup_disk_header</TD></TR>
+			<TR><TD PORT="boot_blocks_pos">512</TD><TD PORT="boot_blocks_size">1024</TD><TD>BootBlocksType</TD><TD PORT="boot_blocks_type">boot_blocks</TD></TR>
+			<TR><TD PORT="file_data_pos">1536</TD><TD PORT="file_data_size">(backup_disk_header.total_size_used - 1536)</TD><TD>FileDataSeq</TD><TD PORT="file_data_type">file_data</TD></TR>
+		</TABLE>>];
+		subgraph cluster__file_data_type {
+			label="AppleBackup::FileDataType";
+			graph[style=dotted];
+
+			file_data_type__seq [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+				<TR><TD BGCOLOR="#E0FFE0">pos</TD><TD BGCOLOR="#E0FFE0">size</TD><TD BGCOLOR="#E0FFE0">type</TD><TD BGCOLOR="#E0FFE0">id</TD></TR>
+				<TR><TD PORT="file_version_pos">0</TD><TD PORT="file_version_size">2</TD><TD>u2be</TD><TD PORT="file_version_type">file_version</TD></TR>
+				<TR><TD PORT="file_magic_pos">2</TD><TD PORT="file_magic_size">4</TD><TD>52 4C 44 57</TD><TD PORT="file_magic_type">file_magic</TD></TR>
+				<TR><TD PORT="file_starts_on_disk_pos">6</TD><TD PORT="file_starts_on_disk_size">2</TD><TD>u2be</TD><TD PORT="file_starts_on_disk_type">file_starts_on_disk</TD></TR>
+				<TR><TD PORT="backup_start_time_pos">8</TD><TD PORT="backup_start_time_size">4</TD><TD>u4be</TD><TD PORT="backup_start_time_type">backup_start_time</TD></TR>
+				<TR><TD PORT="header_offset_pos">12</TD><TD PORT="header_offset_size">4</TD><TD>u4be</TD><TD PORT="header_offset_type">header_offset</TD></TR>
+				<TR><TD PORT="file_name_len_pos">16</TD><TD PORT="file_name_len_size">1</TD><TD>u1</TD><TD PORT="file_name_len_type">file_name_len</TD></TR>
+				<TR><TD PORT="file_name_pos">17</TD><TD PORT="file_name_size">file_name_len</TD><TD>str(ascii)</TD><TD PORT="file_name_type">file_name</TD></TR>
+				<TR><TD PORT="file_name_padding_pos">...</TD><TD PORT="file_name_padding_size">(31 - file_name_len)</TD><TD></TD><TD PORT="file_name_padding_type">file_name_padding</TD></TR>
+				<TR><TD PORT="file_part_pos">...</TD><TD PORT="file_part_size">2</TD><TD>u2be</TD><TD PORT="file_part_type">file_part</TD></TR>
+				<TR><TD PORT="folder_flags_pos">...</TD><TD PORT="folder_flags_size">1</TD><TD>u1</TD><TD PORT="folder_flags_type">folder_flags</TD></TR>
+				<TR><TD PORT="validity_flag_pos">...</TD><TD PORT="validity_flag_size">1</TD><TD>u1</TD><TD PORT="validity_flag_type">validity_flag</TD></TR>
+				<TR><TD PORT="finfo_data_pos">...</TD><TD PORT="finfo_data_size">16</TD><TD>FinfoDataStruct</TD><TD PORT="finfo_data_type">finfo_data</TD></TR>
+				<TR><TD PORT="fxinfo_data_pos">...</TD><TD PORT="fxinfo_data_size">16</TD><TD>FxinfoDataStruct</TD><TD PORT="fxinfo_data_type">fxinfo_data</TD></TR>
+				<TR><TD PORT="dinfo_data_pos">...</TD><TD PORT="dinfo_data_size">16</TD><TD>DinfoDataStruct</TD><TD PORT="dinfo_data_type">dinfo_data</TD></TR>
+				<TR><TD PORT="dxinfo_data_pos">...</TD><TD PORT="dxinfo_data_size">16</TD><TD>DxinfoDataStruct</TD><TD PORT="dxinfo_data_type">dxinfo_data</TD></TR>
+				<TR><TD PORT="file_attributes_pos">...</TD><TD PORT="file_attributes_size">1</TD><TD>u1</TD><TD PORT="file_attributes_type">file_attributes</TD></TR>
+				<TR><TD PORT="file_reserved_pos">...</TD><TD PORT="file_reserved_size">1</TD><TD>u1</TD><TD PORT="file_reserved_type">file_reserved</TD></TR>
+				<TR><TD PORT="creation_date_pos">...</TD><TD PORT="creation_date_size">4</TD><TD>u4be</TD><TD PORT="creation_date_type">creation_date</TD></TR>
+				<TR><TD PORT="modification_date_pos">...</TD><TD PORT="modification_date_size">4</TD><TD>u4be</TD><TD PORT="modification_date_type">modification_date</TD></TR>
+				<TR><TD PORT="data_fork_length_pos">...</TD><TD PORT="data_fork_length_size">4</TD><TD>u4be</TD><TD PORT="data_fork_length_type">data_fork_length</TD></TR>
+				<TR><TD PORT="resource_fork_length_pos">...</TD><TD PORT="resource_fork_length_size">4</TD><TD>u4be</TD><TD PORT="resource_fork_length_type">resource_fork_length</TD></TR>
+				<TR><TD PORT="data_fork_in_file_length_pos">...</TD><TD PORT="data_fork_in_file_length_size">4</TD><TD>u4be</TD><TD PORT="data_fork_in_file_length_type">data_fork_in_file_length</TD></TR>
+				<TR><TD PORT="resource_fork_in_file_length_pos">...</TD><TD PORT="resource_fork_in_file_length_size">4</TD><TD>u4be</TD><TD PORT="resource_fork_in_file_length_type">resource_fork_in_file_length</TD></TR>
+				<TR><TD PORT="full_file_path_length_pos">...</TD><TD PORT="full_file_path_length_size">2</TD><TD>u2be</TD><TD PORT="full_file_path_length_type">full_file_path_length</TD></TR>
+				<TR><TD PORT="full_file_path_pos">...</TD><TD PORT="full_file_path_size">full_file_path_length</TD><TD>str(ascii)</TD><TD PORT="full_file_path_type">full_file_path</TD></TR>
+				<TR><TD PORT="data_fork_pos">...</TD><TD PORT="data_fork_size">data_fork_in_file_length</TD><TD></TD><TD PORT="data_fork_type">data_fork</TD></TR>
+				<TR><TD PORT="resource_fork_pos">...</TD><TD PORT="resource_fork_size">resource_fork_in_file_length</TD><TD></TD><TD PORT="resource_fork_type">resource_fork</TD></TR>
+				<TR><TD PORT="file_padding_pos">...</TD><TD PORT="file_padding_size">(512 - ((((112 + data_fork_in_file_length) + resource_fork_in_file_length) + full_file_path_length) % 512))</TD><TD></TD><TD PORT="file_padding_type">file_padding</TD></TR>
+			</TABLE>>];
+		}
+		subgraph cluster__fxinfo_data_struct {
+			label="AppleBackup::FxinfoDataStruct";
+			graph[style=dotted];
+
+			fxinfo_data_struct__seq [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+				<TR><TD BGCOLOR="#E0FFE0">pos</TD><TD BGCOLOR="#E0FFE0">size</TD><TD BGCOLOR="#E0FFE0">type</TD><TD BGCOLOR="#E0FFE0">id</TD></TR>
+				<TR><TD PORT="fd_icon_id_pos">0</TD><TD PORT="fd_icon_id_size">2</TD><TD>u2be</TD><TD PORT="fd_icon_id_type">fd_icon_id</TD></TR>
+				<TR><TD PORT="fd_unused_pos">2</TD><TD PORT="fd_unused_size">8</TD><TD></TD><TD PORT="fd_unused_type">fd_unused</TD></TR>
+				<TR><TD PORT="fd_comment_pos">10</TD><TD PORT="fd_comment_size">2</TD><TD>u2be</TD><TD PORT="fd_comment_type">fd_comment</TD></TR>
+				<TR><TD PORT="fd_put_away_pos">12</TD><TD PORT="fd_put_away_size">4</TD><TD>u4be</TD><TD PORT="fd_put_away_type">fd_put_away</TD></TR>
+			</TABLE>>];
+		}
+		subgraph cluster__boot_blocks_type {
+			label="AppleBackup::BootBlocksType";
+			graph[style=dotted];
+
+			boot_blocks_type__seq [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+				<TR><TD BGCOLOR="#E0FFE0">pos</TD><TD BGCOLOR="#E0FFE0">size</TD><TD BGCOLOR="#E0FFE0">type</TD><TD BGCOLOR="#E0FFE0">id</TD></TR>
+				<TR><TD PORT="sig_bytes_pos">0</TD><TD PORT="sig_bytes_size">2</TD><TD>4C 4B</TD><TD PORT="sig_bytes_type">sig_bytes</TD></TR>
+				<TR><TD PORT="branch_code_pos">2</TD><TD PORT="branch_code_size">4</TD><TD>u4be</TD><TD PORT="branch_code_type">branch_code</TD></TR>
+				<TR><TD PORT="boot_block_flags_pos">6</TD><TD PORT="boot_block_flags_size">1</TD><TD>u1</TD><TD PORT="boot_block_flags_type">boot_block_flags</TD></TR>
+				<TR><TD PORT="boot_block_version_number_pos">7</TD><TD PORT="boot_block_version_number_size">1</TD><TD>u1</TD><TD PORT="boot_block_version_number_type">boot_block_version_number</TD></TR>
+				<TR><TD PORT="secondary_sound_and_video_pages_pos">8</TD><TD PORT="secondary_sound_and_video_pages_size">2</TD><TD>u2be</TD><TD PORT="secondary_sound_and_video_pages_type">secondary_sound_and_video_pages</TD></TR>
+				<TR><TD PORT="len_system_name_pos">10</TD><TD PORT="len_system_name_size">1</TD><TD>u1</TD><TD PORT="len_system_name_type">len_system_name</TD></TR>
+				<TR><TD PORT="system_name_pos">11</TD><TD PORT="system_name_size">len_system_name</TD><TD>str(ascii)</TD><TD PORT="system_name_type">system_name</TD></TR>
+				<TR><TD PORT="system_name_padding_pos">...</TD><TD PORT="system_name_padding_size">(15 - len_system_name)</TD><TD></TD><TD PORT="system_name_padding_type">system_name_padding</TD></TR>
+				<TR><TD PORT="len_finder_name_pos">...</TD><TD PORT="len_finder_name_size">1</TD><TD>u1</TD><TD PORT="len_finder_name_type">len_finder_name</TD></TR>
+				<TR><TD PORT="finder_name_pos">...</TD><TD PORT="finder_name_size">len_finder_name</TD><TD>str(ascii)</TD><TD PORT="finder_name_type">finder_name</TD></TR>
+				<TR><TD PORT="finder_name_padding_pos">...</TD><TD PORT="finder_name_padding_size">(15 - len_finder_name)</TD><TD></TD><TD PORT="finder_name_padding_type">finder_name_padding</TD></TR>
+				<TR><TD PORT="len_debugger_name_pos">...</TD><TD PORT="len_debugger_name_size">1</TD><TD>u1</TD><TD PORT="len_debugger_name_type">len_debugger_name</TD></TR>
+				<TR><TD PORT="debugger_name_pos">...</TD><TD PORT="debugger_name_size">len_debugger_name</TD><TD>str(ascii)</TD><TD PORT="debugger_name_type">debugger_name</TD></TR>
+				<TR><TD PORT="debugger_name_padding_pos">...</TD><TD PORT="debugger_name_padding_size">(15 - len_debugger_name)</TD><TD></TD><TD PORT="debugger_name_padding_type">debugger_name_padding</TD></TR>
+				<TR><TD PORT="len_dissassembler_name_pos">...</TD><TD PORT="len_dissassembler_name_size">1</TD><TD>u1</TD><TD PORT="len_dissassembler_name_type">len_dissassembler_name</TD></TR>
+				<TR><TD PORT="dissassembler_name_pos">...</TD><TD PORT="dissassembler_name_size">len_dissassembler_name</TD><TD>str(ascii)</TD><TD PORT="dissassembler_name_type">dissassembler_name</TD></TR>
+				<TR><TD PORT="dissassembler_name_padding_pos">...</TD><TD PORT="dissassembler_name_padding_size">(15 - len_dissassembler_name)</TD><TD></TD><TD PORT="dissassembler_name_padding_type">dissassembler_name_padding</TD></TR>
+				<TR><TD PORT="len_start_up_screen_name_pos">...</TD><TD PORT="len_start_up_screen_name_size">1</TD><TD>u1</TD><TD PORT="len_start_up_screen_name_type">len_start_up_screen_name</TD></TR>
+				<TR><TD PORT="start_up_screen_name_pos">...</TD><TD PORT="start_up_screen_name_size">len_start_up_screen_name</TD><TD>str(ascii)</TD><TD PORT="start_up_screen_name_type">start_up_screen_name</TD></TR>
+				<TR><TD PORT="start_up_screen_name_padding_pos">...</TD><TD PORT="start_up_screen_name_padding_size">(15 - len_start_up_screen_name)</TD><TD></TD><TD PORT="start_up_screen_name_padding_type">start_up_screen_name_padding</TD></TR>
+				<TR><TD PORT="len_boot_up_name_pos">...</TD><TD PORT="len_boot_up_name_size">1</TD><TD>u1</TD><TD PORT="len_boot_up_name_type">len_boot_up_name</TD></TR>
+				<TR><TD PORT="boot_up_name_pos">...</TD><TD PORT="boot_up_name_size">len_boot_up_name</TD><TD>str(ascii)</TD><TD PORT="boot_up_name_type">boot_up_name</TD></TR>
+				<TR><TD PORT="boot_up_name_padding_pos">...</TD><TD PORT="boot_up_name_padding_size">(15 - len_boot_up_name)</TD><TD></TD><TD PORT="boot_up_name_padding_type">boot_up_name_padding</TD></TR>
+				<TR><TD PORT="len_clipboard_name_pos">...</TD><TD PORT="len_clipboard_name_size">1</TD><TD>u1</TD><TD PORT="len_clipboard_name_type">len_clipboard_name</TD></TR>
+				<TR><TD PORT="clipboard_name_pos">...</TD><TD PORT="clipboard_name_size">len_clipboard_name</TD><TD>str(ascii)</TD><TD PORT="clipboard_name_type">clipboard_name</TD></TR>
+				<TR><TD PORT="clipboard_name_padding_pos">...</TD><TD PORT="clipboard_name_padding_size">(15 - len_clipboard_name)</TD><TD></TD><TD PORT="clipboard_name_padding_type">clipboard_name_padding</TD></TR>
+				<TR><TD PORT="max_files_pos">...</TD><TD PORT="max_files_size">2</TD><TD>u2be</TD><TD PORT="max_files_type">max_files</TD></TR>
+				<TR><TD PORT="event_queue_size_pos">...</TD><TD PORT="event_queue_size_size">2</TD><TD>u2be</TD><TD PORT="event_queue_size_type">event_queue_size</TD></TR>
+				<TR><TD PORT="heap_on_128k_mac_pos">...</TD><TD PORT="heap_on_128k_mac_size">4</TD><TD>u4be</TD><TD PORT="heap_on_128k_mac_type">heap_on_128k_mac</TD></TR>
+				<TR><TD PORT="heap_on_256k_mac_pos">...</TD><TD PORT="heap_on_256k_mac_size">4</TD><TD>u4be</TD><TD PORT="heap_on_256k_mac_type">heap_on_256k_mac</TD></TR>
+				<TR><TD PORT="heap_on_512k_mac_pos">...</TD><TD PORT="heap_on_512k_mac_size">4</TD><TD>u4be</TD><TD PORT="heap_on_512k_mac_type">heap_on_512k_mac</TD></TR>
+				<TR><TD PORT="boot_code_pos">...</TD><TD PORT="boot_code_size">886</TD><TD></TD><TD PORT="boot_code_type">boot_code</TD></TR>
+			</TABLE>>];
+		}
+		subgraph cluster__dinfo_data_struct {
+			label="AppleBackup::DinfoDataStruct";
+			graph[style=dotted];
+
+			dinfo_data_struct__seq [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+				<TR><TD BGCOLOR="#E0FFE0">pos</TD><TD BGCOLOR="#E0FFE0">size</TD><TD BGCOLOR="#E0FFE0">type</TD><TD BGCOLOR="#E0FFE0">id</TD></TR>
+				<TR><TD PORT="fr_rect_pos">0</TD><TD PORT="fr_rect_size">8</TD><TD></TD><TD PORT="fr_rect_type">fr_rect</TD></TR>
+				<TR><TD PORT="fr_flags_pos">8</TD><TD PORT="fr_flags_size">2</TD><TD>u2be</TD><TD PORT="fr_flags_type">fr_flags</TD></TR>
+				<TR><TD PORT="fr_location_pos">10</TD><TD PORT="fr_location_size">4</TD><TD>u4be</TD><TD PORT="fr_location_type">fr_location</TD></TR>
+				<TR><TD PORT="fr_view_pos">14</TD><TD PORT="fr_view_size">2</TD><TD>u2be</TD><TD PORT="fr_view_type">fr_view</TD></TR>
+			</TABLE>>];
+		}
+		subgraph cluster__dxinfo_data_struct {
+			label="AppleBackup::DxinfoDataStruct";
+			graph[style=dotted];
+
+			dxinfo_data_struct__seq [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+				<TR><TD BGCOLOR="#E0FFE0">pos</TD><TD BGCOLOR="#E0FFE0">size</TD><TD BGCOLOR="#E0FFE0">type</TD><TD BGCOLOR="#E0FFE0">id</TD></TR>
+				<TR><TD PORT="fr_scroll_pos">0</TD><TD PORT="fr_scroll_size">4</TD><TD>u4be</TD><TD PORT="fr_scroll_type">fr_scroll</TD></TR>
+				<TR><TD PORT="fr_open_chain_pos">4</TD><TD PORT="fr_open_chain_size">4</TD><TD>u4be</TD><TD PORT="fr_open_chain_type">fr_open_chain</TD></TR>
+				<TR><TD PORT="fr_unused_pos">8</TD><TD PORT="fr_unused_size">2</TD><TD></TD><TD PORT="fr_unused_type">fr_unused</TD></TR>
+				<TR><TD PORT="fr_comment_pos">10</TD><TD PORT="fr_comment_size">2</TD><TD>u2be</TD><TD PORT="fr_comment_type">fr_comment</TD></TR>
+				<TR><TD PORT="fr_put_away_pos">12</TD><TD PORT="fr_put_away_size">4</TD><TD>u4be</TD><TD PORT="fr_put_away_type">fr_put_away</TD></TR>
+			</TABLE>>];
+		}
+		subgraph cluster__file_data_seq {
+			label="AppleBackup::FileDataSeq";
+			graph[style=dotted];
+
+			file_data_seq__seq [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+				<TR><TD BGCOLOR="#E0FFE0">pos</TD><TD BGCOLOR="#E0FFE0">size</TD><TD BGCOLOR="#E0FFE0">type</TD><TD BGCOLOR="#E0FFE0">id</TD></TR>
+				<TR><TD PORT="file_data_contents_pos">0</TD><TD PORT="file_data_contents_size">...</TD><TD>FileDataType</TD><TD PORT="file_data_contents_type">file_data_contents</TD></TR>
+				<TR><TD COLSPAN="4" PORT="file_data_contents__repeat">repeat to end of stream</TD></TR>
+			</TABLE>>];
+		}
+		subgraph cluster__finfo_data_struct {
+			label="AppleBackup::FinfoDataStruct";
+			graph[style=dotted];
+
+			finfo_data_struct__seq [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+				<TR><TD BGCOLOR="#E0FFE0">pos</TD><TD BGCOLOR="#E0FFE0">size</TD><TD BGCOLOR="#E0FFE0">type</TD><TD BGCOLOR="#E0FFE0">id</TD></TR>
+				<TR><TD PORT="fd_type_pos">0</TD><TD PORT="fd_type_size">4</TD><TD>str(ascii)</TD><TD PORT="fd_type_type">fd_type</TD></TR>
+				<TR><TD PORT="fd_creator_pos">4</TD><TD PORT="fd_creator_size">4</TD><TD>str(ascii)</TD><TD PORT="fd_creator_type">fd_creator</TD></TR>
+				<TR><TD PORT="fd_flags_0_7_pos">8</TD><TD PORT="fd_flags_0_7_size">1</TD><TD>u1</TD><TD PORT="fd_flags_0_7_type">fd_flags_0_7</TD></TR>
+				<TR><TD PORT="fd_flags_8_f_pos">9</TD><TD PORT="fd_flags_8_f_size">1</TD><TD>u1</TD><TD PORT="fd_flags_8_f_type">fd_flags_8_f</TD></TR>
+				<TR><TD PORT="fd_location_pos">10</TD><TD PORT="fd_location_size">4</TD><TD>u4be</TD><TD PORT="fd_location_type">fd_location</TD></TR>
+				<TR><TD PORT="fd_fldr_pos">14</TD><TD PORT="fd_fldr_size">2</TD><TD>u2be</TD><TD PORT="fd_fldr_type">fd_fldr</TD></TR>
+			</TABLE>>];
+		}
+		subgraph cluster__backup_disk_header_type {
+			label="AppleBackup::BackupDiskHeaderType";
+			graph[style=dotted];
+
+			backup_disk_header_type__seq [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+				<TR><TD BGCOLOR="#E0FFE0">pos</TD><TD BGCOLOR="#E0FFE0">size</TD><TD BGCOLOR="#E0FFE0">type</TD><TD BGCOLOR="#E0FFE0">id</TD></TR>
+				<TR><TD PORT="version_pos">0</TD><TD PORT="version_size">2</TD><TD>u2be</TD><TD PORT="version_type">version</TD></TR>
+				<TR><TD PORT="magic_pos">2</TD><TD PORT="magic_size">4</TD><TD>43 4D 57 4C</TD><TD PORT="magic_type">magic</TD></TR>
+				<TR><TD PORT="disk_number_pos">6</TD><TD PORT="disk_number_size">2</TD><TD>u2be</TD><TD PORT="disk_number_type">disk_number</TD></TR>
+				<TR><TD PORT="total_disks_pos">8</TD><TD PORT="total_disks_size">2</TD><TD>u2be</TD><TD PORT="total_disks_type">total_disks</TD></TR>
+				<TR><TD PORT="backup_start_time_pos">10</TD><TD PORT="backup_start_time_size">4</TD><TD>u4be</TD><TD PORT="backup_start_time_type">backup_start_time</TD></TR>
+				<TR><TD PORT="backup_start_time2_pos">14</TD><TD PORT="backup_start_time2_size">4</TD><TD>u4be</TD><TD PORT="backup_start_time2_type">backup_start_time2</TD></TR>
+				<TR><TD PORT="hard_drive_name_len_pos">18</TD><TD PORT="hard_drive_name_len_size">1</TD><TD>u1</TD><TD PORT="hard_drive_name_len_type">hard_drive_name_len</TD></TR>
+				<TR><TD PORT="hard_drive_name_pos">19</TD><TD PORT="hard_drive_name_size">hard_drive_name_len</TD><TD>str(ascii)</TD><TD PORT="hard_drive_name_type">hard_drive_name</TD></TR>
+				<TR><TD PORT="hard_drive_name_padding_pos">...</TD><TD PORT="hard_drive_name_padding_size">(31 - hard_drive_name_len)</TD><TD></TD><TD PORT="hard_drive_name_padding_type">hard_drive_name_padding</TD></TR>
+				<TR><TD PORT="total_file_size_pos">...</TD><TD PORT="total_file_size_size">4</TD><TD>u4be</TD><TD PORT="total_file_size_type">total_file_size</TD></TR>
+				<TR><TD PORT="total_size_used_pos">...</TD><TD PORT="total_size_used_size">4</TD><TD>u4be</TD><TD PORT="total_size_used_type">total_size_used</TD></TR>
+				<TR><TD PORT="bdh_padding_pos">...</TD><TD PORT="bdh_padding_size">454</TD><TD></TD><TD PORT="bdh_padding_type">bdh_padding</TD></TR>
+			</TABLE>>];
+		}
+	}
+	apple_backup__seq:backup_disk_header_type -> backup_disk_header_type__seq [style=bold];
+	apple_backup__seq:boot_blocks_type -> boot_blocks_type__seq [style=bold];
+	backup_disk_header_type__seq:total_size_used_type -> apple_backup__seq:file_data_size [color="#404040"];
+	apple_backup__seq:file_data_type -> file_data_seq__seq [style=bold];
+	file_data_type__seq:file_name_len_type -> file_data_type__seq:file_name_size [color="#404040"];
+	file_data_type__seq:file_name_len_type -> file_data_type__seq:file_name_padding_size [color="#404040"];
+	file_data_type__seq:finfo_data_type -> finfo_data_struct__seq [style=bold];
+	file_data_type__seq:fxinfo_data_type -> fxinfo_data_struct__seq [style=bold];
+	file_data_type__seq:dinfo_data_type -> dinfo_data_struct__seq [style=bold];
+	file_data_type__seq:dxinfo_data_type -> dxinfo_data_struct__seq [style=bold];
+	file_data_type__seq:full_file_path_length_type -> file_data_type__seq:full_file_path_size [color="#404040"];
+	file_data_type__seq:data_fork_in_file_length_type -> file_data_type__seq:data_fork_size [color="#404040"];
+	file_data_type__seq:resource_fork_in_file_length_type -> file_data_type__seq:resource_fork_size [color="#404040"];
+	file_data_type__seq:data_fork_in_file_length_type -> file_data_type__seq:file_padding_size [color="#404040"];
+	file_data_type__seq:resource_fork_in_file_length_type -> file_data_type__seq:file_padding_size [color="#404040"];
+	file_data_type__seq:full_file_path_length_type -> file_data_type__seq:file_padding_size [color="#404040"];
+	boot_blocks_type__seq:len_system_name_type -> boot_blocks_type__seq:system_name_size [color="#404040"];
+	boot_blocks_type__seq:len_system_name_type -> boot_blocks_type__seq:system_name_padding_size [color="#404040"];
+	boot_blocks_type__seq:len_finder_name_type -> boot_blocks_type__seq:finder_name_size [color="#404040"];
+	boot_blocks_type__seq:len_finder_name_type -> boot_blocks_type__seq:finder_name_padding_size [color="#404040"];
+	boot_blocks_type__seq:len_debugger_name_type -> boot_blocks_type__seq:debugger_name_size [color="#404040"];
+	boot_blocks_type__seq:len_debugger_name_type -> boot_blocks_type__seq:debugger_name_padding_size [color="#404040"];
+	boot_blocks_type__seq:len_dissassembler_name_type -> boot_blocks_type__seq:dissassembler_name_size [color="#404040"];
+	boot_blocks_type__seq:len_dissassembler_name_type -> boot_blocks_type__seq:dissassembler_name_padding_size [color="#404040"];
+	boot_blocks_type__seq:len_start_up_screen_name_type -> boot_blocks_type__seq:start_up_screen_name_size [color="#404040"];
+	boot_blocks_type__seq:len_start_up_screen_name_type -> boot_blocks_type__seq:start_up_screen_name_padding_size [color="#404040"];
+	boot_blocks_type__seq:len_boot_up_name_type -> boot_blocks_type__seq:boot_up_name_size [color="#404040"];
+	boot_blocks_type__seq:len_boot_up_name_type -> boot_blocks_type__seq:boot_up_name_padding_size [color="#404040"];
+	boot_blocks_type__seq:len_clipboard_name_type -> boot_blocks_type__seq:clipboard_name_size [color="#404040"];
+	boot_blocks_type__seq:len_clipboard_name_type -> boot_blocks_type__seq:clipboard_name_padding_size [color="#404040"];
+	file_data_seq__seq:file_data_contents_type -> file_data_type__seq [style=bold];
+	backup_disk_header_type__seq:hard_drive_name_len_type -> backup_disk_header_type__seq:hard_drive_name_size [color="#404040"];
+	backup_disk_header_type__seq:hard_drive_name_len_type -> backup_disk_header_type__seq:hard_drive_name_padding_size [color="#404040"];
+}
