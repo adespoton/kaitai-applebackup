@@ -4,7 +4,6 @@ meta:
   application: Apple Backup 1.00 - 1.04
   license: MIT
   endian: be
-  ks-debug: true
 doc: |
   In the early- to mid- 1990s, Apple produced their Macintosh Performa line of computers.
   These computers did not come with install disks, but instead with software pre-installed

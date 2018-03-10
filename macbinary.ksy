@@ -1,6 +1,7 @@
 meta:
   id: macbinary
   title: MacBinary III flattened Macintosh file
+  application: macbinary I through III
   file-extension: bin
   license: MIT
   endian: be

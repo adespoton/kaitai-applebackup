@@ -4,10 +4,8 @@ import io.kaitai.struct.ByteBufferKaitaiStream;
 import io.kaitai.struct.KaitaiStruct;
 import io.kaitai.struct.KaitaiStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 
 /**
@@ -25,15 +23,9 @@ import java.nio.charset.Charset;
  * @see <a href="https://www.downtowndougbrown.com/2013/06/legacy-apple-backup-file-format-on-floppy-disks/">Source</a>
  */
 public class AppleBackup extends KaitaiStruct {
-    public Map<String, Integer> _attrStart = new HashMap<String, Integer>();
-    public Map<String, Integer> _attrEnd = new HashMap<String, Integer>();
-    public Map<String, ArrayList<Integer>> _arrStart = new HashMap<String, ArrayList<Integer>>();
-    public Map<String, ArrayList<Integer>> _arrEnd = new HashMap<String, ArrayList<Integer>>();
-
     public static AppleBackup fromFile(String fileName) throws IOException {
         return new AppleBackup(new ByteBufferKaitaiStream(fileName));
     }
-    public static String[] _seqFields = new String[] { "backupDiskHeader", "bootBlocks", "fileData" };
 
     public AppleBackup(KaitaiStream _io) {
         this(_io, null, null);
@@ -47,37 +39,23 @@ public class AppleBackup extends KaitaiStruct {
         super(_io);
         this._parent = _parent;
         this._root = _root == null ? this : _root;
+        _read();
     }
-    public void _read() {
-        _attrStart.put("backupDiskHeader", this._io.pos());
+    private void _read() {
         this._raw_backupDiskHeader = this._io.readBytes(512);
         KaitaiStream _io__raw_backupDiskHeader = new ByteBufferKaitaiStream(_raw_backupDiskHeader);
         this.backupDiskHeader = new BackupDiskHeaderType(_io__raw_backupDiskHeader, this, _root);
-        this.backupDiskHeader._read();
-        _attrEnd.put("backupDiskHeader", this._io.pos());
-        _attrStart.put("bootBlocks", this._io.pos());
         this._raw_bootBlocks = this._io.readBytes(1024);
         KaitaiStream _io__raw_bootBlocks = new ByteBufferKaitaiStream(_raw_bootBlocks);
         this.bootBlocks = new BootBlocksType(_io__raw_bootBlocks, this, _root);
-        this.bootBlocks._read();
-        _attrEnd.put("bootBlocks", this._io.pos());
-        _attrStart.put("fileData", this._io.pos());
         this._raw_fileData = this._io.readBytes((backupDiskHeader().totalSizeUsed() - 1536));
         KaitaiStream _io__raw_fileData = new ByteBufferKaitaiStream(_raw_fileData);
         this.fileData = new FileDataSeq(_io__raw_fileData, this, _root);
-        this.fileData._read();
-        _attrEnd.put("fileData", this._io.pos());
     }
     public static class FileDataType extends KaitaiStruct {
-        public Map<String, Integer> _attrStart = new HashMap<String, Integer>();
-        public Map<String, Integer> _attrEnd = new HashMap<String, Integer>();
-        public Map<String, ArrayList<Integer>> _arrStart = new HashMap<String, ArrayList<Integer>>();
-        public Map<String, ArrayList<Integer>> _arrEnd = new HashMap<String, ArrayList<Integer>>();
-
         public static FileDataType fromFile(String fileName) throws IOException {
             return new FileDataType(new ByteBufferKaitaiStream(fileName));
         }
-        public static String[] _seqFields = new String[] { "fileVersion", "fileMagic", "fileStartsOnDisk", "backupStartTime", "headerOffset", "fileNameLen", "fileName", "fileNamePadding", "filePart", "folderFlags", "validityFlag", "finfoData", "fxinfoData", "dinfoData", "dxinfoData", "fileAttributes", "fileReserved", "creationDate", "modificationDate", "dataForkLength", "resourceForkLength", "dataForkInFileLength", "resourceForkInFileLength", "fullFilePathLength", "fullFilePath", "dataFork", "resourceFork", "filePadding" };
 
         public FileDataType(KaitaiStream _io) {
             this(_io, null, null);
@@ -91,113 +69,54 @@ public class AppleBackup extends KaitaiStruct {
             super(_io);
             this._parent = _parent;
             this._root = _root;
+            _read();
         }
-        public void _read() {
-            _attrStart.put("fileVersion", this._io.pos());
+        private void _read() {
             this.fileVersion = this._io.readU2be();
-            _attrEnd.put("fileVersion", this._io.pos());
-            _attrStart.put("fileMagic", this._io.pos());
             this.fileMagic = this._io.ensureFixedContents(new byte[] { 82, 76, 68, 87 });
-            _attrEnd.put("fileMagic", this._io.pos());
-            _attrStart.put("fileStartsOnDisk", this._io.pos());
             this.fileStartsOnDisk = this._io.readU2be();
-            _attrEnd.put("fileStartsOnDisk", this._io.pos());
-            _attrStart.put("backupStartTime", this._io.pos());
             this.backupStartTime = this._io.readU4be();
-            _attrEnd.put("backupStartTime", this._io.pos());
-            _attrStart.put("headerOffset", this._io.pos());
             this.headerOffset = this._io.readU4be();
-            _attrEnd.put("headerOffset", this._io.pos());
-            _attrStart.put("fileNameLen", this._io.pos());
             this.fileNameLen = this._io.readU1();
-            _attrEnd.put("fileNameLen", this._io.pos());
-            _attrStart.put("fileName", this._io.pos());
             this.fileName = new String(this._io.readBytes(fileNameLen()), Charset.forName("ascii"));
-            _attrEnd.put("fileName", this._io.pos());
-            _attrStart.put("fileNamePadding", this._io.pos());
             this.fileNamePadding = this._io.readBytes((31 - fileNameLen()));
-            _attrEnd.put("fileNamePadding", this._io.pos());
-            _attrStart.put("filePart", this._io.pos());
             this.filePart = this._io.readU2be();
-            _attrEnd.put("filePart", this._io.pos());
-            _attrStart.put("folderFlags", this._io.pos());
             this.folderFlags = this._io.readU1();
-            _attrEnd.put("folderFlags", this._io.pos());
-            _attrStart.put("validityFlag", this._io.pos());
             this.validityFlag = this._io.readU1();
-            _attrEnd.put("validityFlag", this._io.pos());
             if (folderFlags() == 0) {
-                _attrStart.put("finfoData", this._io.pos());
                 this._raw_finfoData = this._io.readBytes(16);
                 KaitaiStream _io__raw_finfoData = new ByteBufferKaitaiStream(_raw_finfoData);
                 this.finfoData = new FinfoDataStruct(_io__raw_finfoData, this, _root);
-                this.finfoData._read();
-                _attrEnd.put("finfoData", this._io.pos());
             }
             if (folderFlags() == 0) {
-                _attrStart.put("fxinfoData", this._io.pos());
                 this._raw_fxinfoData = this._io.readBytes(16);
                 KaitaiStream _io__raw_fxinfoData = new ByteBufferKaitaiStream(_raw_fxinfoData);
                 this.fxinfoData = new FxinfoDataStruct(_io__raw_fxinfoData, this, _root);
-                this.fxinfoData._read();
-                _attrEnd.put("fxinfoData", this._io.pos());
             }
             if (folderFlags() != 0) {
-                _attrStart.put("dinfoData", this._io.pos());
                 this._raw_dinfoData = this._io.readBytes(16);
                 KaitaiStream _io__raw_dinfoData = new ByteBufferKaitaiStream(_raw_dinfoData);
                 this.dinfoData = new DinfoDataStruct(_io__raw_dinfoData, this, _root);
-                this.dinfoData._read();
-                _attrEnd.put("dinfoData", this._io.pos());
             }
             if (folderFlags() != 0) {
-                _attrStart.put("dxinfoData", this._io.pos());
                 this._raw_dxinfoData = this._io.readBytes(16);
                 KaitaiStream _io__raw_dxinfoData = new ByteBufferKaitaiStream(_raw_dxinfoData);
                 this.dxinfoData = new DxinfoDataStruct(_io__raw_dxinfoData, this, _root);
-                this.dxinfoData._read();
-                _attrEnd.put("dxinfoData", this._io.pos());
             }
-            _attrStart.put("fileAttributes", this._io.pos());
             this.fileAttributes = this._io.readU1();
-            _attrEnd.put("fileAttributes", this._io.pos());
-            _attrStart.put("fileReserved", this._io.pos());
             this.fileReserved = this._io.readU1();
-            _attrEnd.put("fileReserved", this._io.pos());
-            _attrStart.put("creationDate", this._io.pos());
             this.creationDate = this._io.readU4be();
-            _attrEnd.put("creationDate", this._io.pos());
-            _attrStart.put("modificationDate", this._io.pos());
             this.modificationDate = this._io.readU4be();
-            _attrEnd.put("modificationDate", this._io.pos());
-            _attrStart.put("dataForkLength", this._io.pos());
             this.dataForkLength = this._io.readU4be();
-            _attrEnd.put("dataForkLength", this._io.pos());
-            _attrStart.put("resourceForkLength", this._io.pos());
             this.resourceForkLength = this._io.readU4be();
-            _attrEnd.put("resourceForkLength", this._io.pos());
-            _attrStart.put("dataForkInFileLength", this._io.pos());
             this.dataForkInFileLength = this._io.readU4be();
-            _attrEnd.put("dataForkInFileLength", this._io.pos());
-            _attrStart.put("resourceForkInFileLength", this._io.pos());
             this.resourceForkInFileLength = this._io.readU4be();
-            _attrEnd.put("resourceForkInFileLength", this._io.pos());
-            _attrStart.put("fullFilePathLength", this._io.pos());
             this.fullFilePathLength = this._io.readU2be();
-            _attrEnd.put("fullFilePathLength", this._io.pos());
-            _attrStart.put("fullFilePath", this._io.pos());
             this.fullFilePath = new String(this._io.readBytes(fullFilePathLength()), Charset.forName("ascii"));
-            _attrEnd.put("fullFilePath", this._io.pos());
-            _attrStart.put("dataFork", this._io.pos());
             this.dataFork = this._io.readBytes(dataForkInFileLength());
-            _attrEnd.put("dataFork", this._io.pos());
-            _attrStart.put("resourceFork", this._io.pos());
             this.resourceFork = this._io.readBytes(resourceForkInFileLength());
-            _attrEnd.put("resourceFork", this._io.pos());
             if ( (((512 - KaitaiStream.mod((((112 + dataForkInFileLength()) + resourceForkInFileLength()) + fullFilePathLength()), 512)) != 512) || ((_parent()._parent().backupDiskHeader().diskNumber() - _parent()._parent().backupDiskHeader().totalDisks()) == 0)) ) {
-                _attrStart.put("filePadding", this._io.pos());
                 this.filePadding = this._io.readBytes((512 - KaitaiStream.mod((((112 + dataForkInFileLength()) + resourceForkInFileLength()) + fullFilePathLength()), 512)));
-                _attrEnd.put("filePadding", this._io.pos());
             }
         }
         private int fileVersion;
@@ -286,15 +205,9 @@ public class AppleBackup extends KaitaiStruct {
         public byte[] _raw_dxinfoData() { return _raw_dxinfoData; }
     }
     public static class FxinfoDataStruct extends KaitaiStruct {
-        public Map<String, Integer> _attrStart = new HashMap<String, Integer>();
-        public Map<String, Integer> _attrEnd = new HashMap<String, Integer>();
-        public Map<String, ArrayList<Integer>> _arrStart = new HashMap<String, ArrayList<Integer>>();
-        public Map<String, ArrayList<Integer>> _arrEnd = new HashMap<String, ArrayList<Integer>>();
-
         public static FxinfoDataStruct fromFile(String fileName) throws IOException {
             return new FxinfoDataStruct(new ByteBufferKaitaiStream(fileName));
         }
-        public static String[] _seqFields = new String[] { "fdIconId", "fdUnused", "fdComment", "fdPutAway" };
 
         public FxinfoDataStruct(KaitaiStream _io) {
             this(_io, null, null);
@@ -308,20 +221,13 @@ public class AppleBackup extends KaitaiStruct {
             super(_io);
             this._parent = _parent;
             this._root = _root;
+            _read();
         }
-        public void _read() {
-            _attrStart.put("fdIconId", this._io.pos());
+        private void _read() {
             this.fdIconId = this._io.readU2be();
-            _attrEnd.put("fdIconId", this._io.pos());
-            _attrStart.put("fdUnused", this._io.pos());
             this.fdUnused = this._io.readBytes(8);
-            _attrEnd.put("fdUnused", this._io.pos());
-            _attrStart.put("fdComment", this._io.pos());
             this.fdComment = this._io.readU2be();
-            _attrEnd.put("fdComment", this._io.pos());
-            _attrStart.put("fdPutAway", this._io.pos());
             this.fdPutAway = this._io.readU4be();
-            _attrEnd.put("fdPutAway", this._io.pos());
         }
         private int fdIconId;
         private byte[] fdUnused;
@@ -345,15 +251,9 @@ public class AppleBackup extends KaitaiStruct {
      * @see <a href="http://mcosre.sourceforge.net/docs/boot_blocks.html">Source</a>
      */
     public static class BootBlocksType extends KaitaiStruct {
-        public Map<String, Integer> _attrStart = new HashMap<String, Integer>();
-        public Map<String, Integer> _attrEnd = new HashMap<String, Integer>();
-        public Map<String, ArrayList<Integer>> _arrStart = new HashMap<String, ArrayList<Integer>>();
-        public Map<String, ArrayList<Integer>> _arrEnd = new HashMap<String, ArrayList<Integer>>();
-
         public static BootBlocksType fromFile(String fileName) throws IOException {
             return new BootBlocksType(new ByteBufferKaitaiStream(fileName));
         }
-        public static String[] _seqFields = new String[] { "sigBytes", "branchCode", "bootBlockFlags", "bootBlockVersionNumber", "secondarySoundAndVideoPages", "lenSystemName", "systemName", "systemNamePadding", "lenFinderName", "finderName", "finderNamePadding", "lenDebuggerName", "debuggerName", "debuggerNamePadding", "lenDissassemblerName", "dissassemblerName", "dissassemblerNamePadding", "lenStartUpScreenName", "startUpScreenName", "startUpScreenNamePadding", "lenBootUpName", "bootUpName", "bootUpNamePadding", "lenClipboardName", "clipboardName", "clipboardNamePadding", "maxFiles", "eventQueueSize", "heapOn128kMac", "heapOn256kMac", "heapOn512kMac", "bootCode" };
 
         public BootBlocksType(KaitaiStream _io) {
             this(_io, null, null);
@@ -367,104 +267,41 @@ public class AppleBackup extends KaitaiStruct {
             super(_io);
             this._parent = _parent;
             this._root = _root;
+            _read();
         }
-        public void _read() {
-            _attrStart.put("sigBytes", this._io.pos());
+        private void _read() {
             this.sigBytes = this._io.ensureFixedContents(new byte[] { 76, 75 });
-            _attrEnd.put("sigBytes", this._io.pos());
-            _attrStart.put("branchCode", this._io.pos());
             this.branchCode = this._io.readU4be();
-            _attrEnd.put("branchCode", this._io.pos());
-            _attrStart.put("bootBlockFlags", this._io.pos());
             this.bootBlockFlags = this._io.readU1();
-            _attrEnd.put("bootBlockFlags", this._io.pos());
-            _attrStart.put("bootBlockVersionNumber", this._io.pos());
             this.bootBlockVersionNumber = this._io.readU1();
-            _attrEnd.put("bootBlockVersionNumber", this._io.pos());
-            _attrStart.put("secondarySoundAndVideoPages", this._io.pos());
             this.secondarySoundAndVideoPages = this._io.readU2be();
-            _attrEnd.put("secondarySoundAndVideoPages", this._io.pos());
-            _attrStart.put("lenSystemName", this._io.pos());
             this.lenSystemName = this._io.readU1();
-            _attrEnd.put("lenSystemName", this._io.pos());
-            _attrStart.put("systemName", this._io.pos());
             this.systemName = new String(this._io.readBytes(lenSystemName()), Charset.forName("ascii"));
-            _attrEnd.put("systemName", this._io.pos());
-            _attrStart.put("systemNamePadding", this._io.pos());
             this.systemNamePadding = this._io.readBytes((15 - lenSystemName()));
-            _attrEnd.put("systemNamePadding", this._io.pos());
-            _attrStart.put("lenFinderName", this._io.pos());
             this.lenFinderName = this._io.readU1();
-            _attrEnd.put("lenFinderName", this._io.pos());
-            _attrStart.put("finderName", this._io.pos());
             this.finderName = new String(this._io.readBytes(lenFinderName()), Charset.forName("ascii"));
-            _attrEnd.put("finderName", this._io.pos());
-            _attrStart.put("finderNamePadding", this._io.pos());
             this.finderNamePadding = this._io.readBytes((15 - lenFinderName()));
-            _attrEnd.put("finderNamePadding", this._io.pos());
-            _attrStart.put("lenDebuggerName", this._io.pos());
             this.lenDebuggerName = this._io.readU1();
-            _attrEnd.put("lenDebuggerName", this._io.pos());
-            _attrStart.put("debuggerName", this._io.pos());
             this.debuggerName = new String(this._io.readBytes(lenDebuggerName()), Charset.forName("ascii"));
-            _attrEnd.put("debuggerName", this._io.pos());
-            _attrStart.put("debuggerNamePadding", this._io.pos());
             this.debuggerNamePadding = this._io.readBytes((15 - lenDebuggerName()));
-            _attrEnd.put("debuggerNamePadding", this._io.pos());
-            _attrStart.put("lenDissassemblerName", this._io.pos());
             this.lenDissassemblerName = this._io.readU1();
-            _attrEnd.put("lenDissassemblerName", this._io.pos());
-            _attrStart.put("dissassemblerName", this._io.pos());
             this.dissassemblerName = new String(this._io.readBytes(lenDissassemblerName()), Charset.forName("ascii"));
-            _attrEnd.put("dissassemblerName", this._io.pos());
-            _attrStart.put("dissassemblerNamePadding", this._io.pos());
             this.dissassemblerNamePadding = this._io.readBytes((15 - lenDissassemblerName()));
-            _attrEnd.put("dissassemblerNamePadding", this._io.pos());
-            _attrStart.put("lenStartUpScreenName", this._io.pos());
             this.lenStartUpScreenName = this._io.readU1();
-            _attrEnd.put("lenStartUpScreenName", this._io.pos());
-            _attrStart.put("startUpScreenName", this._io.pos());
             this.startUpScreenName = new String(this._io.readBytes(lenStartUpScreenName()), Charset.forName("ascii"));
-            _attrEnd.put("startUpScreenName", this._io.pos());
-            _attrStart.put("startUpScreenNamePadding", this._io.pos());
             this.startUpScreenNamePadding = this._io.readBytes((15 - lenStartUpScreenName()));
-            _attrEnd.put("startUpScreenNamePadding", this._io.pos());
-            _attrStart.put("lenBootUpName", this._io.pos());
             this.lenBootUpName = this._io.readU1();
-            _attrEnd.put("lenBootUpName", this._io.pos());
-            _attrStart.put("bootUpName", this._io.pos());
             this.bootUpName = new String(this._io.readBytes(lenBootUpName()), Charset.forName("ascii"));
-            _attrEnd.put("bootUpName", this._io.pos());
-            _attrStart.put("bootUpNamePadding", this._io.pos());
             this.bootUpNamePadding = this._io.readBytes((15 - lenBootUpName()));
-            _attrEnd.put("bootUpNamePadding", this._io.pos());
-            _attrStart.put("lenClipboardName", this._io.pos());
             this.lenClipboardName = this._io.readU1();
-            _attrEnd.put("lenClipboardName", this._io.pos());
-            _attrStart.put("clipboardName", this._io.pos());
             this.clipboardName = new String(this._io.readBytes(lenClipboardName()), Charset.forName("ascii"));
-            _attrEnd.put("clipboardName", this._io.pos());
-            _attrStart.put("clipboardNamePadding", this._io.pos());
             this.clipboardNamePadding = this._io.readBytes((15 - lenClipboardName()));
-            _attrEnd.put("clipboardNamePadding", this._io.pos());
-            _attrStart.put("maxFiles", this._io.pos());
             this.maxFiles = this._io.readU2be();
-            _attrEnd.put("maxFiles", this._io.pos());
-            _attrStart.put("eventQueueSize", this._io.pos());
             this.eventQueueSize = this._io.readU2be();
-            _attrEnd.put("eventQueueSize", this._io.pos());
-            _attrStart.put("heapOn128kMac", this._io.pos());
             this.heapOn128kMac = this._io.readU4be();
-            _attrEnd.put("heapOn128kMac", this._io.pos());
-            _attrStart.put("heapOn256kMac", this._io.pos());
             this.heapOn256kMac = this._io.readU4be();
-            _attrEnd.put("heapOn256kMac", this._io.pos());
-            _attrStart.put("heapOn512kMac", this._io.pos());
             this.heapOn512kMac = this._io.readU4be();
-            _attrEnd.put("heapOn512kMac", this._io.pos());
-            _attrStart.put("bootCode", this._io.pos());
             this.bootCode = this._io.readBytes(886);
-            _attrEnd.put("bootCode", this._io.pos());
         }
         private byte[] sigBytes;
         private long branchCode;
@@ -536,15 +373,9 @@ public class AppleBackup extends KaitaiStruct {
         public AppleBackup _parent() { return _parent; }
     }
     public static class DinfoDataStruct extends KaitaiStruct {
-        public Map<String, Integer> _attrStart = new HashMap<String, Integer>();
-        public Map<String, Integer> _attrEnd = new HashMap<String, Integer>();
-        public Map<String, ArrayList<Integer>> _arrStart = new HashMap<String, ArrayList<Integer>>();
-        public Map<String, ArrayList<Integer>> _arrEnd = new HashMap<String, ArrayList<Integer>>();
-
         public static DinfoDataStruct fromFile(String fileName) throws IOException {
             return new DinfoDataStruct(new ByteBufferKaitaiStream(fileName));
         }
-        public static String[] _seqFields = new String[] { "frRect", "frFlags", "frLocation", "frView" };
 
         public DinfoDataStruct(KaitaiStream _io) {
             this(_io, null, null);
@@ -558,20 +389,13 @@ public class AppleBackup extends KaitaiStruct {
             super(_io);
             this._parent = _parent;
             this._root = _root;
+            _read();
         }
-        public void _read() {
-            _attrStart.put("frRect", this._io.pos());
+        private void _read() {
             this.frRect = this._io.readBytes(8);
-            _attrEnd.put("frRect", this._io.pos());
-            _attrStart.put("frFlags", this._io.pos());
             this.frFlags = this._io.readU2be();
-            _attrEnd.put("frFlags", this._io.pos());
-            _attrStart.put("frLocation", this._io.pos());
             this.frLocation = this._io.readU4be();
-            _attrEnd.put("frLocation", this._io.pos());
-            _attrStart.put("frView", this._io.pos());
             this.frView = this._io.readU2be();
-            _attrEnd.put("frView", this._io.pos());
         }
         private byte[] frRect;
         private int frFlags;
@@ -587,15 +411,9 @@ public class AppleBackup extends KaitaiStruct {
         public AppleBackup.FileDataType _parent() { return _parent; }
     }
     public static class DxinfoDataStruct extends KaitaiStruct {
-        public Map<String, Integer> _attrStart = new HashMap<String, Integer>();
-        public Map<String, Integer> _attrEnd = new HashMap<String, Integer>();
-        public Map<String, ArrayList<Integer>> _arrStart = new HashMap<String, ArrayList<Integer>>();
-        public Map<String, ArrayList<Integer>> _arrEnd = new HashMap<String, ArrayList<Integer>>();
-
         public static DxinfoDataStruct fromFile(String fileName) throws IOException {
             return new DxinfoDataStruct(new ByteBufferKaitaiStream(fileName));
         }
-        public static String[] _seqFields = new String[] { "frScroll", "frOpenChain", "frUnused", "frComment", "frPutAway" };
 
         public DxinfoDataStruct(KaitaiStream _io) {
             this(_io, null, null);
@@ -609,23 +427,14 @@ public class AppleBackup extends KaitaiStruct {
             super(_io);
             this._parent = _parent;
             this._root = _root;
+            _read();
         }
-        public void _read() {
-            _attrStart.put("frScroll", this._io.pos());
+        private void _read() {
             this.frScroll = this._io.readU4be();
-            _attrEnd.put("frScroll", this._io.pos());
-            _attrStart.put("frOpenChain", this._io.pos());
             this.frOpenChain = this._io.readU4be();
-            _attrEnd.put("frOpenChain", this._io.pos());
-            _attrStart.put("frUnused", this._io.pos());
             this.frUnused = this._io.readBytes(2);
-            _attrEnd.put("frUnused", this._io.pos());
-            _attrStart.put("frComment", this._io.pos());
             this.frComment = this._io.readU2be();
-            _attrEnd.put("frComment", this._io.pos());
-            _attrStart.put("frPutAway", this._io.pos());
             this.frPutAway = this._io.readU4be();
-            _attrEnd.put("frPutAway", this._io.pos());
         }
         private long frScroll;
         private long frOpenChain;
@@ -643,15 +452,9 @@ public class AppleBackup extends KaitaiStruct {
         public AppleBackup.FileDataType _parent() { return _parent; }
     }
     public static class FileDataSeq extends KaitaiStruct {
-        public Map<String, Integer> _attrStart = new HashMap<String, Integer>();
-        public Map<String, Integer> _attrEnd = new HashMap<String, Integer>();
-        public Map<String, ArrayList<Integer>> _arrStart = new HashMap<String, ArrayList<Integer>>();
-        public Map<String, ArrayList<Integer>> _arrEnd = new HashMap<String, ArrayList<Integer>>();
-
         public static FileDataSeq fromFile(String fileName) throws IOException {
             return new FileDataSeq(new ByteBufferKaitaiStream(fileName));
         }
-        public static String[] _seqFields = new String[] { "fileDataContents" };
 
         public FileDataSeq(KaitaiStream _io) {
             this(_io, null, null);
@@ -665,36 +468,17 @@ public class AppleBackup extends KaitaiStruct {
             super(_io);
             this._parent = _parent;
             this._root = _root;
+            _read();
         }
-        public void _read() {
-            _attrStart.put("fileDataContents", this._io.pos());
+        private void _read() {
             this.fileDataContents = new ArrayList<FileDataType>();
             {
                 int i = 0;
                 while (!this._io.isEof()) {
-                    {
-                        ArrayList<Integer> _posList = _arrStart.get("fileDataContents");
-                        if (_posList == null) {
-                            _posList = new ArrayList<Integer>();
-                            _arrStart.put("fileDataContents", _posList);
-                        }
-                        _posList.add(this._io.pos());
-                    }
-                    FileDataType _t_fileDataContents = new FileDataType(this._io, this, _root);
-                    _t_fileDataContents._read();
-                    this.fileDataContents.add(_t_fileDataContents);
-                    {
-                        ArrayList<Integer> _posList = _arrEnd.get("fileDataContents");
-                        if (_posList == null) {
-                            _posList = new ArrayList<Integer>();
-                            _arrEnd.put("fileDataContents", _posList);
-                        }
-                        _posList.add(this._io.pos());
-                    }
+                    this.fileDataContents.add(new FileDataType(this._io, this, _root));
                     i++;
                 }
             }
-            _attrEnd.put("fileDataContents", this._io.pos());
         }
         private ArrayList<FileDataType> fileDataContents;
         private AppleBackup _root;
@@ -704,15 +488,9 @@ public class AppleBackup extends KaitaiStruct {
         public AppleBackup _parent() { return _parent; }
     }
     public static class FinfoDataStruct extends KaitaiStruct {
-        public Map<String, Integer> _attrStart = new HashMap<String, Integer>();
-        public Map<String, Integer> _attrEnd = new HashMap<String, Integer>();
-        public Map<String, ArrayList<Integer>> _arrStart = new HashMap<String, ArrayList<Integer>>();
-        public Map<String, ArrayList<Integer>> _arrEnd = new HashMap<String, ArrayList<Integer>>();
-
         public static FinfoDataStruct fromFile(String fileName) throws IOException {
             return new FinfoDataStruct(new ByteBufferKaitaiStream(fileName));
         }
-        public static String[] _seqFields = new String[] { "fdType", "fdCreator", "fdFlags07", "fdFlags8F", "fdLocation", "fdFldr" };
 
         public FinfoDataStruct(KaitaiStream _io) {
             this(_io, null, null);
@@ -726,26 +504,15 @@ public class AppleBackup extends KaitaiStruct {
             super(_io);
             this._parent = _parent;
             this._root = _root;
+            _read();
         }
-        public void _read() {
-            _attrStart.put("fdType", this._io.pos());
+        private void _read() {
             this.fdType = new String(this._io.readBytes(4), Charset.forName("ascii"));
-            _attrEnd.put("fdType", this._io.pos());
-            _attrStart.put("fdCreator", this._io.pos());
             this.fdCreator = new String(this._io.readBytes(4), Charset.forName("ascii"));
-            _attrEnd.put("fdCreator", this._io.pos());
-            _attrStart.put("fdFlags07", this._io.pos());
             this.fdFlags07 = this._io.readU1();
-            _attrEnd.put("fdFlags07", this._io.pos());
-            _attrStart.put("fdFlags8F", this._io.pos());
             this.fdFlags8F = this._io.readU1();
-            _attrEnd.put("fdFlags8F", this._io.pos());
-            _attrStart.put("fdLocation", this._io.pos());
             this.fdLocation = this._io.readU4be();
-            _attrEnd.put("fdLocation", this._io.pos());
-            _attrStart.put("fdFldr", this._io.pos());
             this.fdFldr = this._io.readU2be();
-            _attrEnd.put("fdFldr", this._io.pos());
         }
         private String fdType;
         private String fdCreator;
@@ -765,15 +532,9 @@ public class AppleBackup extends KaitaiStruct {
         public AppleBackup.FileDataType _parent() { return _parent; }
     }
     public static class BackupDiskHeaderType extends KaitaiStruct {
-        public Map<String, Integer> _attrStart = new HashMap<String, Integer>();
-        public Map<String, Integer> _attrEnd = new HashMap<String, Integer>();
-        public Map<String, ArrayList<Integer>> _arrStart = new HashMap<String, ArrayList<Integer>>();
-        public Map<String, ArrayList<Integer>> _arrEnd = new HashMap<String, ArrayList<Integer>>();
-
         public static BackupDiskHeaderType fromFile(String fileName) throws IOException {
             return new BackupDiskHeaderType(new ByteBufferKaitaiStream(fileName));
         }
-        public static String[] _seqFields = new String[] { "version", "magic", "diskNumber", "totalDisks", "backupStartTime", "backupStartTime2", "hardDriveNameLen", "hardDriveName", "hardDriveNamePadding", "totalFileSize", "totalSizeUsed", "bdhPadding" };
 
         public BackupDiskHeaderType(KaitaiStream _io) {
             this(_io, null, null);
@@ -787,44 +548,21 @@ public class AppleBackup extends KaitaiStruct {
             super(_io);
             this._parent = _parent;
             this._root = _root;
+            _read();
         }
-        public void _read() {
-            _attrStart.put("version", this._io.pos());
+        private void _read() {
             this.version = this._io.readU2be();
-            _attrEnd.put("version", this._io.pos());
-            _attrStart.put("magic", this._io.pos());
             this.magic = this._io.ensureFixedContents(new byte[] { 67, 77, 87, 76 });
-            _attrEnd.put("magic", this._io.pos());
-            _attrStart.put("diskNumber", this._io.pos());
             this.diskNumber = this._io.readU2be();
-            _attrEnd.put("diskNumber", this._io.pos());
-            _attrStart.put("totalDisks", this._io.pos());
             this.totalDisks = this._io.readU2be();
-            _attrEnd.put("totalDisks", this._io.pos());
-            _attrStart.put("backupStartTime", this._io.pos());
             this.backupStartTime = this._io.readU4be();
-            _attrEnd.put("backupStartTime", this._io.pos());
-            _attrStart.put("backupStartTime2", this._io.pos());
             this.backupStartTime2 = this._io.readU4be();
-            _attrEnd.put("backupStartTime2", this._io.pos());
-            _attrStart.put("hardDriveNameLen", this._io.pos());
             this.hardDriveNameLen = this._io.readU1();
-            _attrEnd.put("hardDriveNameLen", this._io.pos());
-            _attrStart.put("hardDriveName", this._io.pos());
             this.hardDriveName = new String(this._io.readBytes(hardDriveNameLen()), Charset.forName("ascii"));
-            _attrEnd.put("hardDriveName", this._io.pos());
-            _attrStart.put("hardDriveNamePadding", this._io.pos());
             this.hardDriveNamePadding = this._io.readBytes((31 - hardDriveNameLen()));
-            _attrEnd.put("hardDriveNamePadding", this._io.pos());
-            _attrStart.put("totalFileSize", this._io.pos());
             this.totalFileSize = this._io.readU4be();
-            _attrEnd.put("totalFileSize", this._io.pos());
-            _attrStart.put("totalSizeUsed", this._io.pos());
             this.totalSizeUsed = this._io.readU4be();
-            _attrEnd.put("totalSizeUsed", this._io.pos());
-            _attrStart.put("bdhPadding", this._io.pos());
             this.bdhPadding = this._io.readBytes(454);
-            _attrEnd.put("bdhPadding", this._io.pos());
         }
         private int version;
         private byte[] magic;
